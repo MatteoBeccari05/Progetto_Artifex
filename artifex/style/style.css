@@ -1,4 +1,3 @@
-/* Impostazioni generali */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap');
 
 :root {
@@ -13,13 +12,13 @@
     --transition: all 0.3s ease;
 }
 
-* {
+* { !important;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
+body { !important;
     font-family: 'Raleway', sans-serif;
     color: var(--text);
     background-color: var(--background);
@@ -76,11 +75,9 @@ a:hover {
     color: white;
 }
 
-
-
 /* Hero Section */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../images/hero-bg.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.sitiarcheologiciditalia.it/wp-content/uploads/2023/09/sicilia-agrigento-valle-templi.jpg');
     background-size: cover;
     background-position: center;
     color: white;
@@ -137,13 +134,13 @@ a:hover {
     margin: 0 auto;
 }
 
-.tours-grid {
+.tours-grid  { !important;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 2rem;
 }
 
-.tour-card {
+.tour-card { !important;
     border-radius: 8px;
     overflow: hidden;
     background-color: white;
@@ -151,22 +148,16 @@ a:hover {
     transition: var(--transition);
 }
 
-.tour-card:hover {
+.tour-card:hover { !important;
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-}
-
-.tour-image {
-    height: 200px;
-    width: 100%;
-    object-fit: cover;
 }
 
 .tour-content {
     padding: 1.5rem;
 }
 
-.tour-category {
+.tour-category { !important;
     display: inline-block;
     background-color: var(--light);
     color: var(--primary);
@@ -193,19 +184,12 @@ a:hover {
     margin-bottom: 1.5rem;
 }
 
-.tour-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .tour-price {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary);
 }
 
-/* Why Choose Us Section */
 .features {
     background-color: var(--light);
     padding: 4rem 1rem;
@@ -441,49 +425,6 @@ a:hover {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-}
-
-/* Pagina di Login e Registrazione */
-.auth-container {
-    max-width: 500px;
-    margin: 4rem auto;
-    padding: 2rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-}
-
-.auth-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-.form-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-family: inherit;
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-.form-footer {
-    margin-top: 2rem;
-    text-align: center;
 }
 
 /* Pagina Profilo */
@@ -761,27 +702,6 @@ a:hover {
     }
 }
 
-
-footer {
-    background: linear-gradient(135deg, #2c3e50, #1a252f);
-    color: #ffffff;
-    padding: 20px 0;
-    text-align: center;
-    font-family: 'Arial', sans-serif;
-    border-top: 4px solid #3498db;
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
 .copyright {
     font-size: 14px;
     letter-spacing: 0.5px;
@@ -792,9 +712,332 @@ footer {
     color: #3498db;
 }
 
+.cart-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.cart-table th, .cart-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--light);
+}
+
+.cart-table th {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 500;
+}
+
+.cart-table tr:hover {
+    background-color: var(--light);
+}
+
+.cart-table tfoot {
+    font-weight: 600;
+    background-color: var(--light);
+}
+
+.quantity-select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 70px;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+    padding: 2rem;
+    text-align: center;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.btn-success {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #27ae60;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
 @media (max-width: 768px) {
-    .footer-content {
+    .cart-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .cart-actions {
         flex-direction: column;
-        gap: 10px;
+        gap: 1rem;
+    }
+
+    .cart-actions a, .cart-actions button {
+        width: 100%;
+        text-align: center;
     }
 }
+
+/* Stili aggiuntivi per la pagina di checkout */
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+}
+
+.checkout-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background-color: white;
+}
+
+.checkout-table th, .checkout-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--light);
+}
+
+.checkout-table th {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 500;
+}
+
+.checkout-table tfoot {
+    font-weight: 600;
+    background-color: var(--light);
+}
+
+.checkout-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.checkout-card-header {
+    background-color: var(--primary);
+    color: white;
+    padding: 1rem;
+}
+
+.checkout-card-body {
+    padding: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.summary-divider {
+    height: 1px;
+    background-color: var(--light);
+    margin: 1rem 0;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.stats-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.stats-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-right: 15px;
+}
+
+.stats-content h3 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.stats-content p {
+    margin: 0;
+    color: #6c757d;
+}
+
+.admin-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.admin-tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 2rem;
+}
+
+.admin-tab {
+    padding: 1rem 2rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+}
+
+.admin-tab.active {
+    border-bottom: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.admin-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.language-fields {
+    border: 1px solid #eee;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.language-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.language-row select, .language-row input {
+    flex: 1;
+}
+
+.add-language-btn {
+    margin-top: 0.5rem;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+

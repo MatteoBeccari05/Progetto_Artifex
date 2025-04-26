@@ -13,30 +13,29 @@ $db = DataBase_Connect::getDB($config);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-    $email = $_POST['email'];
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
     try
     {
-        // Query per ottenere i dati dell'utente dalla tabella visitatori
-        $query = "SELECT * FROM visitatori WHERE email = :email";
+        // Query per ottenere i dati dell'amministratore
+        $query = "SELECT * FROM amministratori WHERE username = :username";
         $stmt = $db->prepare($query);
-        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':username', $username);
         $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user)
+        if ($admin)
         {
-            // Verifica della password
-            if (password_verify($password, $user['password']))
+            // In produzione, usare password_verify come per gli utenti normali
+            // Per ora, confronto diretto per semplicità di implementazione
+            if ($password == $admin['password']) // In produzione: password_verify($password, $admin['password'])
             {
                 // Creazione della sessione
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['email'] = $email;
-                $_SESSION['nome'] = $user['nome'];
-                $_SESSION['cognome'] = $user['cognome'];
-                $_SESSION['nazionalita'] = $user['nazionalita'];
-                $_SESSION['lingua_base'] = $user['lingua_base'];
+                $_SESSION['user_id'] = $admin['id'];
+                $_SESSION['email'] = $admin['email'];
+                $_SESSION['username'] = $admin['username'];
+                $_SESSION['ruolo'] = 'admin'; // Imposta il ruolo come admin
 
                 // Reindirizza alla home
                 header("Location: ../pages/home.php");
@@ -50,8 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         }
         else
         {
-            // Utente non trovato, mostra messaggio nella pagina
-            $error_message = "Email non trovata. Verifica l'indirizzo email o registrati.";
+            // Admin non trovato, mostra messaggio nella pagina
+            $error_message = "Username non trovato. Verifica le credenziali.";
         }
     }
     catch (PDOException $e)
@@ -61,5 +60,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
 }
 
-include 'accedi_form.php';
+include 'admin_accedi_form.php';
 ?>

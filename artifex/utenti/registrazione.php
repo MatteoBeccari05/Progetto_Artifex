@@ -5,6 +5,9 @@ $config = require '../connessione_db/db_config.php';
 require '../connessione_db/DB_Connect.php';
 require_once '../connessione_db/functions.php';
 
+// Inizializza la variabile di errore
+$error_message = "";
+
 // Connessione al DB
 $db = DataBase_Connect::getDB($config);
 
@@ -36,7 +39,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
         if ($existingUser > 0)
         {
-            header("Location: ../redirect/error_username.pages" );
+            // Imposta il messaggio di errore invece di fare il redirect
+            $error_message = "L'email inserita è già registrata nel sistema. Utilizzare un'altra email o effettuare il login.";
         }
         else
         {
@@ -61,11 +65,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
             // Reindirizza alla pagina principale
             header("Location: ../pages/home.php");
+            exit;
         }
     }
     catch (PDOException $e)
     {
         logError($e);
+        $error_message = "Si è verificato un errore durante la registrazione. Riprova più tardi.";
     }
 }
+include 'registrazione_form.php';
 ?>

@@ -3,6 +3,82 @@
 $content = 'ArtiFex';
 require_once '../strutture_pagina/functions_active_navbar.php';
 require '../strutture_pagina/navbar.php';
+
+// Configurazione del DB
+$config = require '../connessione_db/db_config.php';
+require '../connessione_db/DB_Connect.php';
+require_once '../connessione_db/functions.php';
+
+// Connessione al DB
+$db = DataBase_Connect::getDB($config);
+
+// Function to get featured tours
+function getFeaturedTours($db) {
+    $sql = "SELECT v.id, v.titolo, v.descrizione, v.durata_media, v.luogo 
+            FROM visite v 
+            LIMIT 3";
+
+    $stmt = $db->prepare($sql);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Function to get upcoming events
+function getUpcomingEvents($db) {
+    $today = date('Y-m-d');
+
+    $sql = "SELECT e.id, e.data_evento, e.ora_inizio, e.lingua, e.prezzo, 
+                  e.min_partecipanti, e.max_partecipanti, v.titolo, v.luogo, 
+                  g.nome, g.cognome,
+                  (SELECT COUNT(*) FROM elementi_carrello ec 
+                   JOIN carrelli c ON ec.id_carrello = c.id 
+                   WHERE ec.id_evento = e.id AND c.stato = 'pagato') as posti_occupati
+            FROM eventi e
+            JOIN visite v ON e.id_visita = v.id
+            JOIN guide g ON e.id_guida = g.id
+            WHERE e.data_evento >= :today
+            ORDER BY e.data_evento ASC
+            LIMIT 3";
+
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':today', $today);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Function to get featured guides
+function getFeaturedGuides($db) {
+    $sql = "SELECT g.id, g.nome, g.cognome, g.titolo_studio, g.luogo_nascita
+            FROM guide g
+            LIMIT 3";
+
+    $stmt = $db->prepare($sql);
+    $stmt->execute();
+    $guides = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get language skills for each guide
+    foreach ($guides as &$guide) {
+        $sql_languages = "SELECT lingua, livello 
+                         FROM competenze_linguistiche 
+                         WHERE id_guida = :id_guida";
+
+        $stmt_languages = $db->prepare($sql_languages);
+        $stmt_languages->bindParam(':id_guida', $guide['id']);
+        $stmt_languages->execute();
+
+        $guide['lingue'] = $stmt_languages->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    return $guides;
+}
+
+// Get data from the database
+$featuredTours = getFeaturedTours($db);
+$upcomingEvents = getUpcomingEvents($db);
+$featuredGuides = getFeaturedGuides($db);
+
 ?>
 
 <!doctype html>
@@ -25,7 +101,6 @@ require '../strutture_pagina/navbar.php';
         <p>Visite guidate ai più affascinanti siti di interesse storico-culturale in Italia e nel mondo</p>
         <div class="hero-cta">
             <a href="eventi.php" class="btn btn-primary">Esplora le Visite</a>
-            <a href="about.php" class="btn btn-outline">Chi Siamo</a>
         </div>
     </div>
 </section>
@@ -33,68 +108,40 @@ require '../strutture_pagina/navbar.php';
 <!-- Featured Tours Section -->
 <section class="section">
     <div class="section-header">
-        <h2 class="section-title">Le Nostre Visite Guidate</h2>
+        <h2 class="section-title">I nostri tour guidati</h2>
         <p class="section-subtitle">Scopri i nostri itinerari più popolari selezionati dai migliori esperti del settore</p>
     </div>
 
     <div class="tours-grid">
-        <!-- Tour Card 1 -->
-        <div class="tour-card">
-            <img src="../images/vatican.jpg" alt="Musei Vaticani" class="tour-image">
-            <div class="tour-content">
-                <span class="tour-category">Roma</span>
-                <h3 class="tour-title">Musei Vaticani e Cappella Sistina</h3>
-                <div class="tour-info">
-                    <span><i class="fa-regular fa-clock"></i> 3 ore</span>
-                    <span><i class="fa-solid fa-user-group"></i> Max 20 persone</span>
-                </div>
-                <p class="tour-description">Un viaggio attraverso secoli di arte e storia nei prestigiosi Musei Vaticani, culminando con la visita alla magnifica Cappella Sistina.</p>
-                <div class="tour-footer">
-                    <span class="tour-price">€35 / persona</span>
-                    <a href="dettaglio_visita.php?id=1" class="btn btn-primary">Dettagli</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tour Card 2 -->
-        <div class="tour-card">
-            <img src="../images/pompeii.jpg" alt="Pompei" class="tour-image">
-            <div class="tour-content">
-                <span class="tour-category">Napoli</span>
-                <h3 class="tour-title">Sito Archeologico di Pompei</h3>
-                <div class="tour-info">
-                    <span><i class="fa-regular fa-clock"></i> 4 ore</span>
-                    <span><i class="fa-solid fa-user-group"></i> Max 15 persone</span>
-                </div>
-                <p class="tour-description">Esplora l'antica città romana perfettamente conservata sotto le ceneri dell'eruzione del Vesuvio del 79 d.C.</p>
-                <div class="tour-footer">
-                    <span class="tour-price">€45 / persona</span>
-                    <a href="dettaglio_visita.php?id=2" class="btn btn-primary">Dettagli</a>
+        <?php foreach ($featuredTours as $tour): ?>
+            <div class="tour-card">
+                <div class="tour-content">
+                    <span class="tour-category"><?php echo htmlspecialchars($tour['luogo']); ?></span>
+                    <h3 class="tour-title"><?php echo htmlspecialchars($tour['titolo']); ?></h3>
+                    <div class="tour-info">
+                        <span><i class="fa-regular fa-clock"></i> <?php echo $tour['durata_media']/60; ?> ore</span>
+                        <span><i class="fa-solid fa-user-group"></i> Max 20 persone</span>
+                    </div>
+                    <p class="tour-description"><?php echo htmlspecialchars(substr($tour['descrizione'], 0, 150)) . '...'; ?></p>
+                    <div class="tour-footer">
+                        <?php
+                        // Get the average price for this tour
+                        $stmt = $db->prepare("SELECT AVG(prezzo) as prezzo_medio FROM eventi WHERE id_visita = :id");
+                        $stmt->bindParam(':id', $tour['id']);
+                        $stmt->execute();
+                        $avgPrice = $stmt->fetch(PDO::FETCH_ASSOC);
+                        $price = $avgPrice['prezzo_medio'] ? number_format($avgPrice['prezzo_medio'], 2) : "N/A";
+                        ?>
+                        <span class="tour-price">€<?php echo $price; ?> / persona</span>
+                        <a href="eventi.php?id=<?php echo $tour['id']; ?>" class="btn btn-primary">Dettagli</a>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Tour Card 3 -->
-        <div class="tour-card">
-            <img src="../images/uffizi.jpg" alt="Galleria degli Uffizi" class="tour-image">
-            <div class="tour-content">
-                <span class="tour-category">Firenze</span>
-                <h3 class="tour-title">Galleria degli Uffizi</h3>
-                <div class="tour-info">
-                    <span><i class="fa-regular fa-clock"></i> 2.5 ore</span>
-                    <span><i class="fa-solid fa-user-group"></i> Max 12 persone</span>
-                </div>
-                <p class="tour-description">Una delle più celebri pinacoteche al mondo con capolavori di Botticelli, Leonardo, Michelangelo, Raffaello e molti altri.</p>
-                <div class="tour-footer">
-                    <span class="tour-price">€40 / persona</span>
-                    <a href="dettaglio_visita.php?id=3" class="btn btn-primary">Dettagli</a>
-                </div>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 
     <div class="text-center mt-3">
-        <a href="visite.php" class="btn btn-outline">Vedi Tutte le Visite</a>
+        <a href="servizi.php" class="btn btn-outline">Vedi Tutte le Visite</a>
     </div>
 </section>
 
@@ -142,97 +189,7 @@ require '../strutture_pagina/navbar.php';
     </div>
 </section>
 
-<!-- Upcoming Events Section -->
-<section class="section">
-    <div class="section-header">
-        <h2 class="section-title">Prossimi Eventi</h2>
-        <p class="section-subtitle">Gli eventi in programma nelle prossime settimane</p>
-    </div>
 
-    <div class="tours-grid">
-        <!-- Event Card 1 -->
-        <div class="tour-card">
-            <div class="tour-content">
-                <span class="event-date">26 Aprile 2025 • 10:00</span>
-                <h3 class="tour-title">Musei Vaticani e Cappella Sistina</h3>
-                <div class="event-details">
-                    <div class="event-detail">
-                        <i class="fa-solid fa-language detail-icon"></i>
-                        <span>Lingua: Italiano</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-user detail-icon"></i>
-                        <span>Guida: Marco Bianchi</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-users detail-icon"></i>
-                        <span>Posti disponibili: 12/20</span>
-                    </div>
-                </div>
-                <div class="tour-footer">
-                    <span class="tour-price">€35 / persona</span>
-                    <a href="prenota.php?evento=101" class="btn btn-primary">Prenota</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 2 -->
-        <div class="tour-card">
-            <div class="tour-content">
-                <span class="event-date">27 Aprile 2025 • 09:30</span>
-                <h3 class="tour-title">Sito Archeologico di Pompei</h3>
-                <div class="event-details">
-                    <div class="event-detail">
-                        <i class="fa-solid fa-language detail-icon"></i>
-                        <span>Lingua: Inglese</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-user detail-icon"></i>
-                        <span>Guida: Sofia Rossi</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-users detail-icon"></i>
-                        <span>Posti disponibili: 8/15</span>
-                    </div>
-                </div>
-                <div class="tour-footer">
-                    <span class="tour-price">€45 / persona</span>
-                    <a href="prenota.php?evento=102" class="btn btn-primary">Prenota</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 3 -->
-        <div class="tour-card">
-            <div class="tour-content">
-                <span class="event-date">30 Aprile 2025 • 14:00</span>
-                <h3 class="tour-title">Galleria degli Uffizi</h3>
-                <div class="event-details">
-                    <div class="event-detail">
-                        <i class="fa-solid fa-language detail-icon"></i>
-                        <span>Lingua: Italiano</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-user detail-icon"></i>
-                        <span>Guida: Laura Verdi</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-users detail-icon"></i>
-                        <span>Posti disponibili: 5/12</span>
-                    </div>
-                </div>
-                <div class="tour-footer">
-                    <span class="tour-price">€40 / persona</span>
-                    <a href="prenota.php?evento=103" class="btn btn-primary">Prenota</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="text-center mt-3">
-        <a href="eventi.php" class="btn btn-outline">Vedi Tutti gli Eventi</a>
-    </div>
-</section>
 
 <!-- Guide Section -->
 <section class="section">
@@ -242,127 +199,57 @@ require '../strutture_pagina/navbar.php';
     </div>
 
     <div class="tours-grid">
-        <!-- Guide Card 1 -->
-        <div class="tour-card">
-            <img src="../images/guide1.jpg" alt="Marco Bianchi" class="tour-image">
-            <div class="tour-content">
-                <h3 class="tour-title">Marco Bianchi</h3>
-                <div class="event-details">
-                    <div class="event-detail">
-                        <i class="fa-solid fa-graduation-cap detail-icon"></i>
-                        <span>Laurea in Storia dell'Arte</span>
+        <?php foreach ($featuredGuides as $index => $guide): ?>
+            <div class="tour-card">
+                <div class="tour-content">
+                    <h3 class="tour-title"><?php echo htmlspecialchars($guide['nome'] . ' ' . $guide['cognome']); ?></h3>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <i class="fa-solid fa-graduation-cap detail-icon"></i>
+                            <span><?php echo htmlspecialchars($guide['titolo_studio']); ?></span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fa-solid fa-language detail-icon"></i>
+                            <span>
+                            <?php
+                            $languages = [];
+                            foreach ($guide['lingue'] as $lang) {
+                                $languages[] = $lang['lingua'] . ' (' . $lang['livello'] . ')';
+                            }
+                            echo htmlspecialchars(implode(', ', $languages));
+                            ?>
+                        </span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fa-solid fa-location-dot detail-icon"></i>
+                            <span><?php echo htmlspecialchars($guide['luogo_nascita']); ?></span>
+                        </div>
                     </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-language detail-icon"></i>
-                        <span>Italiano (madrelingua), Inglese (avanzato)</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-location-dot detail-icon"></i>
-                        <span>Roma</span>
-                    </div>
+                    <?php
+                    // Get random description for guide
+                    $descriptions = [
+                        "Specializzato in arte rinascimentale e barocca, vi accompagnerà alla scoperta dei più importanti siti culturali.",
+                        "Con oltre 10 anni di esperienza nel settore, è la guida ideale per scoprire i segreti dell'arte e della storia.",
+                        "Esperto di arte e archeologia, rende ogni visita un'esperienza indimenticabile ricca di aneddoti e curiosità."
+                    ];
+                    $randomDesc = $descriptions[array_rand($descriptions)];
+                    ?>
+                    <p class="tour-description"><?php echo $randomDesc; ?></p>
                 </div>
-                <p class="tour-description">Specializzato in arte rinascimentale e barocca, Marco vi accompagnerà alla scoperta dei più importanti siti culturali di Roma.</p>
             </div>
-        </div>
-
-        <!-- Guide Card 2 -->
-        <div class="tour-card">
-            <img src="../images/guide2.jpg" alt="Sofia Rossi" class="tour-image">
-            <div class="tour-content">
-                <h3 class="tour-title">Sofia Rossi</h3>
-                <div class="event-details">
-                    <div class="event-detail">
-                        <i class="fa-solid fa-graduation-cap detail-icon"></i>
-                        <span>Dottorato in Archeologia</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-language detail-icon"></i>
-                        <span>Italiano (madrelingua), Inglese (madrelingua), Spagnolo (avanzato)</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-location-dot detail-icon"></i>
-                        <span>Napoli</span>
-                    </div>
-                </div>
-                <p class="tour-description">Con oltre 10 anni di esperienza negli scavi di Pompei, Sofia è la guida ideale per scoprire i segreti dell'antica città romana.</p>
-            </div>
-        </div>
-
-        <!-- Guide Card 3 -->
-        <div class="tour-card">
-            <img src="../images/guide3.jpg" alt="Laura Verdi" class="tour-image">
-            <div class="tour-content">
-                <h3 class="tour-title">Laura Verdi</h3>
-                <div class="event-details">
-                    <div class="event-detail">
-                        <i class="fa-solid fa-graduation-cap detail-icon"></i>
-                        <span>Laurea in Storia dell'Arte e Conservazione</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-language detail-icon"></i>
-                        <span>Italiano (madrelingua), Francese (avanzato), Tedesco (normale)</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-location-dot detail-icon"></i>
-                        <span>Firenze</span>
-                    </div>
-                </div>
-                <p class="tour-description">Esperta d'arte rinascimentale fiorentina, Laura vi svelerà i segreti dei capolavori custoditi nella Galleria degli Uffizi.</p>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 </section>
 
-<!-- Testimonials Section -->
-<section class="testimonials">
-    <div class="section-header">
-        <h2 class="section-title">Cosa Dicono i Nostri Clienti</h2>
-        <p class="section-subtitle">Le esperienze di chi ha scelto le nostre visite guidate</p>
-    </div>
 
-    <div class="testimonials-grid">
-        <div class="testimonial-card">
-            <p class="testimonial-content">La visita ai Musei Vaticani con Marco è stata un'esperienza indimenticabile. La sua conoscenza e passione hanno reso ogni opera d'arte ancora più speciale.</p>
-            <div class="testimonial-author">
-                <img src="../images/user1.jpg" alt="Giulia Marino" class="author-image">
-                <div class="author-info">
-                    <h4>Giulia Marino</h4>
-                    <p>Roma, Italia</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="testimonial-card">
-            <p class="testimonial-content">Sofia ci ha fatto viaggiare nel tempo a Pompei, raccontando storie affascinanti sulla vita quotidiana degli antichi romani. Consigliatissima!</p>
-            <div class="testimonial-author">
-                <img src="../images/user2.jpg" alt="John Smith" class="author-image">
-                <div class="author-info">
-                    <h4>John Smith</h4>
-                    <p>Londra, Regno Unito</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="testimonial-card">
-            <p class="testimonial-content">La Galleria degli Uffizi è magnifica, ma l'esperienza con Laura come guida l'ha resa ancora più straordinaria. La sua conoscenza dell'arte rinascimentale è impressionante.</p>
-            <div class="testimonial-author">
-                <img src="../images/user3.jpg" alt="Marie Dupont" class="author-image">
-                <div class="author-info">
-                    <h4>Marie Dupont</h4>
-                    <p>Parigi, Francia</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- Newsletter Section -->
 <section class="newsletter">
     <div class="newsletter-container">
         <h2>Resta Aggiornato</h2>
         <p>Iscriviti alla nostra newsletter per ricevere in anteprima le nuove visite guidate e offerte speciali</p>
-        <form class="newsletter-form">
-            <input type="email" placeholder="La tua email" class="newsletter-input" required>
+        <form class="newsletter-form" action="#" method="post">
+            <input type="email" name="email" placeholder="La tua email" class="newsletter-input" required>
             <button type="submit" class="newsletter-btn">Iscriviti</button>
         </form>
     </div>
