@@ -97,3 +97,55 @@ create table biglietti (
     foreign key (id_evento) references eventi(id),
     foreign key (id_visitatore) references visitatori(id)
 );
+
+
+INSERT INTO amministratori (username, password, email)
+VALUES 
+('admin1', 'hashed_password1', 'admin1@artifex.com'),
+('admin2', 'hashed_password2', 'admin2@artifex.com');
+
+
+
+
+INSERT INTO guide (nome, cognome, data_nascita, luogo_nascita, titolo_studio)
+VALUES 
+('Giulia', 'Bianchi', '1985-06-15', 'Milano', 'Laurea in Storia dell’Arte'),
+('Carlos', 'Ramirez', '1990-03-22', 'Madrid', 'Laurea in Turismo');
+
+
+
+INSERT INTO competenze_linguistiche (id_guida, lingua, livello)
+VALUES 
+(1, 'Italiano', 'madrelingua'),
+(1, 'Inglese', 'avanzato'),
+(2, 'Spagnolo', 'madrelingua'),
+(2, 'Francese', 'avanzato');
+
+
+
+INSERT INTO visite (titolo, descrizione, durata_media, luogo)
+VALUES 
+('Visita al Museo Archeologico', 'Esplorazione dei reperti della Roma antica.', 90, 'Museo Archeologico Nazionale'),
+('Tour Rinascimentale', 'Un viaggio tra le opere d’arte del Rinascimento.', 120, 'Galleria degli Uffizi'),
+('Passeggiata Barocca', 'Scopri le meraviglie dell’architettura barocca nel centro storico.', 90, 'Centro storico di Roma'),
+('Alla scoperta di Leonardo', 'Tour guidato tra le invenzioni e opere di Leonardo da Vinci.', 75, 'Museo Leonardo da Vinci, Firenze'),
+('Storia Medievale', 'Visita guidata nel castello medievale e nei suoi sotterranei.', 60, 'Castello di Brescia'),
+('Arte Contemporanea Italiana', 'Esplorazione delle opere di artisti italiani contemporanei.', 90, 'MAXXI - Museo nazionale delle arti del XXI secolo, Roma'),
+('Tour delle Ville Venete', 'Tour in pullman tra le antiche ville nobiliari del Veneto.', 180, 'Regione Veneto');
+
+
+
+
+INSERT INTO eventi (id_visita, id_guida, data_evento, ora_inizio, lingua, prezzo, min_partecipanti, max_partecipanti)
+VALUES 
+(1, 1, '2025-05-10', '10:00:00', 'Italiano', 15.00, 5, 20),
+(2, 2, '2025-05-11', '14:00:00', 'Spagnolo', 18.00, 4, 25),
+(3, 1, '2025-05-12', '09:30:00', 'Italiano', 12.50, 3, 15),
+(4, 2, '2025-05-13', '11:00:00', 'Spagnolo', 14.00, 5, 20),
+(5, 1, '2025-05-14', '15:00:00', 'Inglese', 10.00, 2, 12),
+(6, 2, '2025-05-15', '13:00:00', 'Francese', 16.00, 4, 18),
+(7, 2, '2025-05-16', '08:00:00', 'Italiano', 22.00, 6, 30),
+(3, 2, '2025-05-17', '10:00:00', 'Spagnolo', 12.50, 3, 15),
+(4, 1, '2025-05-18', '12:00:00', 'Italiano', 14.00, 5, 20);
+
+
