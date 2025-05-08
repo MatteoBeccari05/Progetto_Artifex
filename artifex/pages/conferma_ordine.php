@@ -112,7 +112,7 @@ if ($ordine && !empty($biglietti)) {
                                         <p style="margin-bottom: 0;">Lingua: <?= htmlspecialchars($biglietto['lingua']) ?></p>
                                     </div>
                                     <div>
-                                        <a href="#?id=<?= $biglietto['id'] ?>" class="btn btn-outline-primary" target="_blank">
+                                        <a href="biglietto.php?id=<?= $biglietto['id'] ?>" class="btn btn-outline-primary" target="_blank">
                                             <i class="fas fa-file-pdf"></i> Scarica Biglietto
                                         </a>
                                     </div>
