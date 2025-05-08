@@ -80,18 +80,5 @@ $visite = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </section>
 
 <?php include '../strutture_pagina/footer.php'; ?>
-
-<script>
-    // Animazione semplice per le card al caricamento
-    document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('.tour-card');
-        cards.forEach((card, index) => {
-            setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    });
-</script>
 </body>
 </html>

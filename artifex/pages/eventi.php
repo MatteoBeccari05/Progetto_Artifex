@@ -136,18 +136,5 @@ $eventi = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </section>
 
 <?php include '../strutture_pagina/footer.php'; ?>
-
-<script>
-    // Animazione per le card al caricamento
-    document.addEventListener('DOMContentLoaded', function() {
-        const items = document.querySelectorAll('.fadeIn');
-        items.forEach((item, index) => {
-            setTimeout(() => {
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    });
-</script>
 </body>
 </html>

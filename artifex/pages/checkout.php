@@ -293,20 +293,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['conferma_ordine'])) {
 
 <?php include '../strutture_pagina/footer.php'; ?>
 
-<script>
-    // Script per chiudere gli alert
-    document.addEventListener('DOMContentLoaded', function() {
-        const alerts = document.querySelectorAll('.alert');
-
-        alerts.forEach(alert => {
-            setTimeout(() => {
-                alert.style.opacity = '0';
-                setTimeout(() => {
-                    alert.style.display = 'none';
-                }, 500);
-            }, 5000);
-        });
-    });
-</script>
 </body>
 </html>

@@ -8,7 +8,7 @@ body {
 
 .container, main {
     width: 100%;
-    min-height: 200px; /* Assicura che ci sia un minimo di spazio per il contenuto */
+    min-height: 200px;
 }
 
 /* Base Footer Styles */

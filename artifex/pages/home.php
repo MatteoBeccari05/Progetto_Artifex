@@ -259,19 +259,6 @@ $featuredGuides = getFeaturedGuides($db);
 require '../strutture_pagina/footer.php';
 ?>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toggle mobile menu
-        const navbarToggle = document.querySelector('.navbar-toggle');
-        const navbarLinks = document.querySelector('.navbar-links');
-
-        if (navbarToggle && navbarLinks) {
-            navbarToggle.addEventListener('click', function() {
-                navbarLinks.classList.toggle('active');
-            });
-        }
-    });
-</script>
 
 </body>
 </html>

@@ -149,17 +149,5 @@ if ($ordine && !empty($biglietti)) {
 
 <?php include '../strutture_pagina/footer.php'; ?>
 
-<script>
-    // Animazione per gli elementi al caricamento
-    document.addEventListener('DOMContentLoaded', function() {
-        const items = document.querySelectorAll('.fadeIn');
-        items.forEach((item, index) => {
-            setTimeout(() => {
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    });
-</script>
 </body>
 </html>
