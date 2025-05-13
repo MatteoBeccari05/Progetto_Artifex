@@ -11,6 +11,7 @@ $is_admin = isset($_SESSION['ruolo']) && $_SESSION['ruolo'] == 'admin'; // Verif
     <div class="nav-left">
         <a href="home.php" class="<?= isActive('home.php') ?>">Home</a>
         <a href="servizi.php" class="<?= isActive('servizi.php') ?>">Tour Guidati</a>
+        <a href="about.php" class="<?= isActive('about.php') ?>">Chi siamo</a>
 
         <?php if ($is_admin): ?>
             <!-- Sezioni visibili solo agli amministratori -->
